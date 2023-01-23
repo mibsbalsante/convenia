@@ -21,6 +21,8 @@ lib-cov
 # Coverage directory used by tools like istanbul
 coverage
 *.lcov
+/cypress/videos/
+/cypress/screenshots/
 
 # nyc test coverage
 .nyc_output
@@ -81,6 +83,7 @@ typings/
 # Nuxt.js build / generate output
 .nuxt
 dist
+dist-ssr
 
 # Gatsby files
 .cache/
@@ -111,3 +114,17 @@ dist
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# System files
+.DS_Store
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
