@@ -1,0 +1,12 @@
+@mixin container {
+  max-width: 1140px;
+  width: 100%;
+  padding: 0 20px;
+  margin: auto;
+}
+
+@mixin center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

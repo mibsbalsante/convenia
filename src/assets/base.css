@@ -1,11 +1,22 @@
 /* -- Color variables -- */
 :root {
-  -color-primary: #222;
+  --color-white: #fcfcfc;
+  --color-black: #262626;
+  --color-blue: #a8e6cf;
+  --color-green: #dcedc1;
+  --color-yellow: #ffd3b6;
+  --color-orange: #ffaaa5;
+  --color-red: #ff8b94;
+
+  /* scheme vars */
+  --color-text: var(--color-black);
+  --color-background: var(--color-white);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-primary: #fff;
+    --color-text: var(--color-white);
+    --color-background: var(--color-black);
   }
 }
 /* -- -- */
@@ -14,18 +25,20 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  margin: 0;
-  position: relative;
-  font-weight: normal;
 }
 
 body {
   min-height: 100vh;
-  font-size: 16px;
+  margin: 0;
+  position: relative;
+  font-weight: normal;
   line-height: 1.6;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color-scheme: dark light;
+  /* defined by scheme */
+  background-color: var(--color-background);
 }
 
 body,
@@ -35,4 +48,7 @@ textarea {
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
+  font-size: 16px;
+  /* defined by scheme */
+  color: var(--color-text);
 }
