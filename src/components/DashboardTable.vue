@@ -31,7 +31,7 @@ const bookingTimeHasStarted = computed(
   >
     <h3 class="table__heading">Mesa {{ id }}</h3>
 
-    <span v-if="activeOrderId">Preenchida</span>
+    <span v-if="activeOrderId">Ocupada</span>
     <span v-else-if="bookingTimeHasStarted">Reservada</span>
     <span v-else>Disponível</span>
   </RouterLink>

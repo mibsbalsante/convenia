@@ -134,7 +134,7 @@ const handlePayment = () => {
 .modal {
   @include container;
 
-  max-width: 600px;
+  max-width: 640px;
   width: 90%;
   min-height: 400px;
   max-height: 92vh;

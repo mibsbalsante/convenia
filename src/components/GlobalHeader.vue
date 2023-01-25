@@ -1,5 +1,8 @@
 <script setup>
 import { useUserStore, useUserActions } from "@/stores/user";
+import IconUtensils from "@fa/solid/utensils.svg";
+import IconBowlFood from "@fa/solid/bowl-food.svg";
+import IconMugHot from "@fa/solid/mug-hot.svg";
 
 const { username, isLoggedIn } = useUserStore();
 const { logout } = useUserActions();
@@ -7,13 +10,17 @@ const { logout } = useUserActions();
 
 <template>
   <header class="header">
-    <div class="container">
-      <img src="#" alt="img header" />
+    <div class="header__container">
+      <div class="header__icons">
+        <IconUtensils />
+        <IconBowlFood />
+        <IconMugHot />
+      </div>
       <nav v-if="isLoggedIn">
         <span
           >Logado como <strong>{{ username }}</strong></span
         >
-        <button class="logout" @click="logout">Sair</button>
+        <button class="header__logout" @click="logout">Sair</button>
       </nav>
     </div>
   </header>
@@ -37,23 +44,29 @@ const { logout } = useUserActions();
 
     gap: 12px;
   }
-}
 
-.container {
-  @include container;
-  @include center;
+  &__icons {
+    @include center;
 
-  height: 60px;
-}
+    gap: 12px;
+  }
 
-.logout {
-  appearance: none;
-  background-color: var(--color-black);
-  color: var(--color-white);
-  min-width: 96px;
-  padding: 8px 24px;
-  border-radius: 120px;
-  border: 0 none;
-  font-weight: 600;
+  &__container {
+    @include container;
+    @include center;
+
+    height: 60px;
+  }
+
+  &__logout {
+    appearance: none;
+    background-color: var(--color-black);
+    color: var(--color-white);
+    min-width: 96px;
+    padding: 8px 24px;
+    border-radius: 120px;
+    border: 0 none;
+    font-weight: 600;
+  }
 }
 </style>
