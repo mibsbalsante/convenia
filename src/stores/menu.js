@@ -1,14 +1,16 @@
 import { ref, computed } from "vue";
-import { defineStore } from "pinia";
+import { defineStore, storeToRefs } from "pinia";
 
-export const useMenuStore = defineStore("menu", () => {
+const menuStore = defineStore("menu", () => {
   const menu = ref([
     {
+      id: 1,
       name: "Comida X",
       price: "90.90",
       quantity: 5,
     },
     {
+      id: 2,
       name: "Bebida Y",
       price: "1.99",
       quantity: -1,
@@ -18,9 +20,12 @@ export const useMenuStore = defineStore("menu", () => {
     menu.value.filter(({ quantity }) => quantity != 0)
   );
 
-  function removeFromMenu(id) {
-    menu[id].quantity = -1;
+  function removeQuantityFromMenu(ind, quantity) {
+    menu.value[ind].quantity = -quantity;
   }
 
-  return { menu, availableMenu, removeFromMenu };
+  return { menu, availableMenu, removeQuantityFromMenu };
 });
+
+export const useMenuStore = () => storeToRefs(menuStore());
+export const useMenuActions = () => menuStore();

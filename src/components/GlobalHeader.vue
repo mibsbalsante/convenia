@@ -1,6 +1,4 @@
 <script setup>
-// import { storeToRefs } from "pinia";
-
 import { useUserStore, useUserActions } from "@/stores/user";
 
 const { username, isLoggedIn } = useUserStore();
@@ -24,11 +22,15 @@ const { logout } = useUserActions();
 <style scoped lang="scss">
 .header {
   background-color: var(--color-blue);
-  color: var(--color-black);
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
+  box-shadow: var(--shadow);
+
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--color-blue);
+  }
 
   nav {
     @include center;

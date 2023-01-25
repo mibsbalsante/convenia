@@ -2,21 +2,50 @@
 :root {
   --color-white: #fcfcfc;
   --color-black: #262626;
-  --color-blue: #a8e6cf;
-  --color-green: #dcedc1;
-  --color-yellow: #ffd3b6;
-  --color-orange: #ffaaa5;
-  --color-red: #ff8b94;
+  --color-blue-lighter: #a8e6cf;
+  --color-blue-darker: #75b39c;
+  --color-green-lighter: #dcedc1;
+  --color-green-darker: #a9ba8e;
+  --color-yellow-lighter: #ffd3b6;
+  --color-yellow-darker: #cca083;
+  --color-orange-lighter: #ffaaa5;
+  --color-orange-darker: #cc7772;
+  --color-red-lighter: #ff8b94;
+  --color-red-darker: #cc5861;
+
+  --shadow: 0 0 8px -4px var(--color-black);
 
   /* scheme vars */
   --color-text: var(--color-black);
   --color-background: var(--color-white);
+
+  --color-blue: var(--color-blue-lighter);
+  --color-blue-helper: var(--color-blue-darker);
+  --color-green: var(--color-green-lighter);
+  --color-green-helper: var(--color-green-darker);
+  --color-yellow: var(--color-yellow-lighter);
+  --color-yellow-helper: var(--color-yellow-darker);
+  --color-orange: var(--color-orange-lighter);
+  --color-orange-helper: var(--color-orange-darker);
+  --color-red: var(--color-red-lighter);
+  --color-red-helper: var(--color-red-darker);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --color-text: var(--color-white);
     --color-background: var(--color-black);
+
+    --color-blue: var(--color-blue-darker);
+    --color-blue-helper: var(--color-blue-lighter);
+    --color-green: var(--color-green-darker);
+    --color-green-helper: var(--color-green-lighter);
+    --color-yellow: var(--color-yellow-darker);
+    --color-yellow-helper: var(--color-yellow-lighter);
+    --color-orange: var(--color-orange-darker);
+    --color-orange-helper: var(--color-orange-lighter);
+    --color-red: var(--color-red-darker);
+    --color-red-helper: var(--color-red-lighter);
   }
 }
 /* -- -- */
@@ -42,6 +71,7 @@ body {
 }
 
 body,
+a,
 button,
 input,
 textarea {
