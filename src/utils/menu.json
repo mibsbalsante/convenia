@@ -1,0 +1,119 @@
+{
+  "menu": [
+    {
+      "name": "X-Burguer",
+      "price": 15.99,
+      "type": "food",
+      "quantity": 15
+    },
+    {
+      "name": "Porção de Batatas",
+      "price": 5.99,
+      "type": "food",
+      "quantity": 25
+    },
+    {
+      "name": "Coca-cola",
+      "price": 4.99,
+      "type": "drink",
+      "quantity": 12
+    },
+    {
+      "name": "Suco de Laranja",
+      "price": 3.99,
+      "type": "drink",
+      "quantity": 8
+    },
+    {
+      "name": "Hamburguer de Frango",
+      "price": 12.99,
+      "type": "food",
+      "quantity": 15
+    },
+    {
+      "name": "Porção de Onion Rings",
+      "price": 7.99,
+      "type": "food",
+      "quantity": 15
+    },
+    {
+      "name": "Refrigerante",
+      "price": 3.99,
+      "type": "drink",
+      "quantity": 8
+    },
+    {
+      "name": "Água",
+      "price": 2.99,
+      "type": "drink",
+      "quantity": 25
+    },
+    {
+      "name": "X-Salada",
+      "price": 10.99,
+      "type": "food",
+      "quantity": 15
+    },
+    {
+      "name": "Porção de Nachos",
+      "price": 8.99,
+      "type": "food",
+      "quantity": 8
+    },
+    {
+      "name": "Suco de Melão",
+      "price": 4.99,
+      "type": "drink",
+      "quantity": 10
+    },
+    {
+      "name": "Suco de Abacaxi",
+      "price": 4.99,
+      "type": "drink",
+      "quantity": 15
+    },
+    {
+      "name": "X-Egg",
+      "price": 14.99,
+      "type": "food",
+      "quantity": 15
+    },
+    {
+      "name": "Porção de Asinhas de Frango",
+      "price": 11.99,
+      "type": "food",
+      "quantity": 8
+    },
+    {
+      "name": "Milkshake de Chocolate",
+      "price": 8.99,
+      "type": "drink",
+      "quantity": 10
+    },
+    {
+      "name": "Milkshake de Morango",
+      "price": 8.99,
+      "type": "drink",
+      "quantity": 15
+    },
+
+    {
+      "name": "X-Tudo",
+      "price": 17.99,
+      "type": "food",
+      "quantity": 5
+    },
+    {
+      "name": "Porção de Bolinhos de Bacalhau",
+      "price": 9.99,
+      "type": "food",
+      "quantity": 10
+    },
+    {
+      "name": "Fanta Laranja",
+      "price": 4.99,
+      "type": "drink",
+      "quantity": 20
+    }
+  ]
+}

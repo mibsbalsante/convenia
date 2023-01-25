@@ -1,21 +1,11 @@
 import { ref, computed } from "vue";
 import { defineStore, storeToRefs } from "pinia";
 
+import menuJSON from "@/utils/menu";
+
 const menuStore = defineStore("menu", () => {
-  const menu = ref([
-    {
-      id: 1,
-      name: "Comida X",
-      price: "90.90",
-      quantity: 5,
-    },
-    {
-      id: 2,
-      name: "Bebida Y",
-      price: "1.99",
-      quantity: -1,
-    },
-  ]);
+  const menu = ref(menuJSON);
+
   const availableMenu = computed(() =>
     menu.value.filter(({ quantity }) => quantity != 0)
   );
