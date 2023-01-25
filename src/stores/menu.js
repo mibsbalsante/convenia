@@ -1,20 +1,34 @@
 import { ref, computed } from "vue";
 import { defineStore, storeToRefs } from "pinia";
 
-import menuJSON from "@/utils/menu";
+import { menu as menuJSON } from "@/utils/menu";
 
 const menuStore = defineStore("menu", () => {
-  const menu = ref(menuJSON.menu);
+  const menu = ref(menuJSON);
 
   const availableMenu = computed(() =>
-    menu.value.filter(({ quantity }) => quantity != 0)
+    menu.value.filter(({ quantity }) => quantity > 0)
   );
 
-  function removeQuantityFromMenu(ind, quantity) {
-    menu.value[ind].quantity = -quantity;
+  const _findMenuItemInd = (itemId) =>
+    menu.value.findIndex(({ id }) => id === itemId);
+
+  function removeQuantityFromMenu(id, quantity) {
+    const ind = _findMenuItemInd(id);
+    menu.value[ind].quantity -= quantity;
   }
 
-  return { menu, availableMenu, removeQuantityFromMenu };
+  function addQuantityBackToMenu(id, quantity) {
+    const ind = _findMenuItemInd(id);
+    menu.value[ind].quantity += quantity;
+  }
+
+  return {
+    menu,
+    availableMenu,
+    removeQuantityFromMenu,
+    addQuantityBackToMenu,
+  };
 });
 
 export const useMenuStore = () => storeToRefs(menuStore());

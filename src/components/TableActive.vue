@@ -1,10 +1,13 @@
 <script setup>
 import { ref, computed } from "vue";
 
-import { useOrdersStore, useOrdersActions } from "@/stores/orders";
-import { useMenuStore } from "@/stores/menu";
+import { accepted_payments as paymentsJSON } from "@/utils/payments";
+import { useOrdersActions } from "@/stores/orders";
+import { useMenuStore, useMenuActions } from "@/stores/menu";
 import IconCircleMinus from "@fa/solid/circle-minus.svg";
 import IconCirclePlus from "@fa/solid/circle-plus.svg";
+
+const TIPPING_TAX = 0.1;
 
 const props = defineProps({
   orderId: String,
@@ -12,44 +15,66 @@ const props = defineProps({
   payments: Array,
 });
 
-const { orders } = useOrdersStore();
 const { addToOrder, removeFromOrder } = useOrdersActions();
 const { availableMenu } = useMenuStore();
+const { removeQuantityFromMenu, addQuantityBackToMenu } = useMenuActions();
 
+// ---- bill management ----
 const currentInd = ref(0);
 const quantity = ref(1);
 
 const currentItem = computed(() => availableMenu.value[currentInd.value] || {});
-const currentOrder = computed(() =>
-  orders.value.find(({ id }) => id === props.orderId)
-);
 const totalBill = computed(() =>
-  currentOrder.value.bill.reduce(
+  props.bill.reduce(
     (total, { price, quantity }) => (total += price * quantity),
     0
   )
 );
+const totalTip = computed(() => totalBill.value * TIPPING_TAX);
 
 const handleAddToBill = () => {
   addToOrder(props.orderId, "bill", {
     ...currentItem.value,
     quantity: quantity.value,
   });
+  removeQuantityFromMenu(currentItem.value.id, quantity.value);
+
   quantity.value = 1;
 };
 
 const handleRemoveFromBill = (ind) => {
+  addQuantityBackToMenu(props.bill[ind].id, props.bill[ind].quantity);
   removeFromOrder(props.orderId, "bill", ind);
+};
+
+// ---- payment management ----
+const paymentTypeId = ref(0);
+const paymentValue = ref(null);
+const paymentDescription = ref(null);
+const paymentValueRemaining = computed(() =>
+  props.payments.reduce(
+    (total, { value }) => (total -= value),
+    totalBill.value + totalTip.value
+  )
+);
+
+const handleAddToPayments = () => {
+  addToOrder(props.orderId, "payments", {
+    ...paymentsJSON[paymentTypeId.value],
+    value: paymentValue.value,
+    description: paymentDescription.value,
+  });
+  quantity.value = 1;
+};
+
+const handleRemoveFromPayments = (ind) => {
+  removeFromOrder(props.orderId, "payments", ind);
 };
 </script>
 
 <template>
   <div class="details">
     <div class="details__container">
-      <p class="details__id">
-        <strong>Cod. atendimento:</strong> {{ orderId }}
-      </p>
-
       <table>
         <thead>
           <tr>
@@ -119,17 +144,90 @@ const handleRemoveFromBill = (ind) => {
           </tr>
           <tr>
             <td colspan="2">Taxa de serviço - 10%</td>
-            <td>R$ {{ (totalBill * 0.1).toFixed(2) }}</td>
+            <td>R$ {{ totalTip.toFixed(2) }}</td>
             <td></td>
           </tr>
           <tr>
             <td colspan="2">Total:</td>
-            <td>R$ {{ (totalBill * 1.1).toFixed(2) }}</td>
+            <td>R$ {{ (totalBill + totalTip).toFixed(2) }}</td>
             <td></td>
           </tr>
+        </tfoot>
+      </table>
+
+      <table v-if="bill?.length > 0">
+        <thead>
+          <tr>
+            <th>Pagamento</th>
+            <th class="details__theading-price">Valor</th>
+            <th class="details__theading-description">Nota</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
           <tr v-for="payment in payments" :key="payment.id">
-            <td colspan="2">{}</td>
-            <td>- <span>-R$ {}</span></td>
+            <td>{{ payment.name }}</td>
+            <td>
+              <span>-R$ {{ payment.value.toFixed(2) }}</span>
+            </td>
+            <td>
+              <span>{{ payment.description }}</span>
+            </td>
+            <td>
+              <button
+                @click="handleRemoveFromPayments(ind)"
+                class="details__button-update"
+              >
+                <IconCircleMinus />
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select
+                class="details__input-item"
+                :value="paymentTypeId"
+                @change="paymentTypeId = Number($event.target.value)"
+              >
+                <option
+                  v-for="(payment, ind) in paymentsJSON"
+                  :value="ind"
+                  :key="payment.id"
+                >
+                  {{ payment.name }}
+                </option>
+              </select>
+            </td>
+            <td>
+              <input
+                type="text"
+                :value="paymentValue"
+                @change="paymentValue = Number($event.target.value)"
+              />
+            </td>
+            <td>
+              <input
+                type="text"
+                :value="paymentDescription"
+                @change="paymentDescription = $event.target.value"
+              />
+            </td>
+            <td>
+              <button
+                @click="handleAddToPayments"
+                class="details__button-update"
+                :disabled="!paymentValue"
+              >
+                <IconCirclePlus />
+              </button>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2"><strong>Valor restante:</strong></td>
+            <td>R$ {{ paymentValueRemaining.toFixed(2) }}</td>
+            <td></td>
           </tr>
         </tfoot>
       </table>
@@ -144,6 +242,10 @@ const handleRemoveFromBill = (ind) => {
   table {
     width: 100%;
     border-collapse: collapse;
+
+    + table {
+      margin-top: 24px;
+    }
   }
 
   th,
@@ -159,8 +261,13 @@ const handleRemoveFromBill = (ind) => {
 
   td {
     font-size: 1rem;
-    padding: 4px 0;
+    padding-top: 4px;
+    padding-bottom: 4px;
     vertical-align: middle;
+  }
+
+  th:nth-of-type(4) {
+    width: 24px;
   }
 
   tr:first-of-type > td {
@@ -168,12 +275,17 @@ const handleRemoveFromBill = (ind) => {
   }
 
   tbody tr:last-of-type > td {
-    padding: 8px 0 16px;
+    padding-top: 8px;
+    padding-bottom: 16px;
   }
 
   tfoot tr:first-of-type > td {
     padding-top: 16px;
     border-top: 1px solid var(--color-grey);
+  }
+
+  input[type="text"] {
+    max-width: 120px;
   }
 
   :is(th, td) {
@@ -207,17 +319,16 @@ const handleRemoveFromBill = (ind) => {
     min-width: 80px;
   }
 
+  &__theading-description {
+    min-width: 120px;
+  }
+
   &__input-item select {
     width: 100%;
   }
 
   &__input-quantity {
     max-width: 96px;
-  }
-
-  &__id {
-    margin: 0 0 16px;
-    font-size: 12px;
   }
 }
 </style>

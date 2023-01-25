@@ -1,0 +1,49 @@
+{
+  "accepted_payments": [
+    {
+      "name": "Visa (Débito)",
+      "type": "debit_card",
+      "uuid": "a743896a-d5f3-11eb-adc1-0242ac120002"
+    },
+    {
+      "name": "Mastercard (Débito)",
+      "type": "debit_card",
+      "uuid": "a743896a-d5f3-11eb-adc1-0242ac120003"
+    },
+    {
+      "name": "American Express (Débito)",
+      "type": "debit_card",
+      "uuid": "a743896a-d5f3-11eb-adc1-0242ac120004"
+    },
+    {
+      "name": "Visa (Crédito)",
+      "type": "credit_card",
+      "uuid": "a743896a-d5f3-11eb-adc1-0242ac120002"
+    },
+    {
+      "name": "Mastercard (Crédito)",
+      "type": "credit_card",
+      "uuid": "a743896a-d5f3-11eb-adc1-0242ac120003"
+    },
+    {
+      "name": "American Express (Crédito)",
+      "type": "credit_card",
+      "uuid": "a743896a-d5f3-11eb-adc1-0242ac120004"
+    },
+    {
+      "name": "Dinheiro",
+      "type": "cash",
+      "uuid": "a743896a-d5f3-11eb-adc1-0242ac120005"
+    },
+    {
+      "name": "Cheque",
+      "type": "check",
+      "uuid": "a743896a-d5f3-11eb-adc1-0242ac120006"
+    },
+    {
+      "name": "Pix",
+      "type": "digital",
+      "uuid": "a743896a-d5f3-11eb-adc1-0242ac120007"
+    }
+  ]
+}
