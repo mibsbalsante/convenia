@@ -55,6 +55,5 @@ const { logout } = useUserActions();
   border-radius: 120px;
   border: 0 none;
   font-weight: 600;
-  cursor: pointer;
 }
 </style>

@@ -2,6 +2,7 @@
 import { computed } from "vue";
 
 import router from "@/router";
+import TableActive from "@/components/TableActive.vue";
 import { useTablesStore, useTablesActions } from "@/stores/tables";
 import { useOrdersStore, useOrdersActions } from "@/stores/orders";
 
@@ -80,46 +81,13 @@ const handlePayment = () => {
           {{ formatHour(currentBookedOrder.bookingEndTime) }}
         </p>
       </div>
-      <div class="details" v-else-if="activeTableOrder">
-        <div class="details__container">
-          <table>
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Quantidade</th>
-                <th>Valor</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="consumables in activeTableOrder.bill"
-                :key="consumables.id"
-              >
-                <td>bebida 1</td>
-                <td>1</td>
-                <td>R$ 0,00</td>
-              </tr>
-              <tr>
-                <td colspan="2">Taxa de serviço</td>
-                <td>R$ 0,00</td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colspan="2">Total:</td>
-                <td>R$ {}</td>
-              </tr>
-              <tr
-                v-for="payment in activeTableOrder.payments"
-                :key="payment.id"
-              >
-                <td colspan="2">{}</td>
-                <td>- <span>-R$ {}</span></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </div>
+      <TableActive
+        class="details"
+        :orderId="activeTableOrder.id"
+        :bill="activeTableOrder.bill"
+        :payments="activeTableOrder.payments"
+        v-else-if="activeTableOrder"
+      />
       <div class="modal__text-content" v-else>
         <p class="modal__text">
           Mesa vazia no momento. Gostaria de reservar ou abrir comanda?
@@ -169,7 +137,7 @@ const handlePayment = () => {
   max-width: 600px;
   width: 90%;
   min-height: 400px;
-  max-height: 80vh;
+  max-height: 92vh;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -211,7 +179,6 @@ const handlePayment = () => {
 
     & > :is(button, a) {
       appearance: none;
-      cursor: pointer;
       padding: 8px 16px;
       border-radius: 100px;
       border: 1px solid var(--color-text);
@@ -228,41 +195,6 @@ const handlePayment = () => {
     & > :is(button, a):only-child {
       margin-left: auto;
     }
-  }
-}
-
-.details {
-  overflow-y: auto;
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  th {
-    font-size: 1.15rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--color-grey);
-  }
-
-  td {
-    font-size: 1rem;
-  }
-
-  tr:first-of-type > td {
-    padding-top: 16px;
-  }
-
-  :is(th, td) {
-    text-align: right;
-  }
-
-  :is(th, td):first-of-type {
-    text-align: left;
-  }
-
-  &__container {
-    padding: 0 18px;
   }
 }
 </style>

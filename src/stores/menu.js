@@ -4,7 +4,7 @@ import { defineStore, storeToRefs } from "pinia";
 import menuJSON from "@/utils/menu";
 
 const menuStore = defineStore("menu", () => {
-  const menu = ref(menuJSON);
+  const menu = ref(menuJSON.menu);
 
   const availableMenu = computed(() =>
     menu.value.filter(({ quantity }) => quantity != 0)

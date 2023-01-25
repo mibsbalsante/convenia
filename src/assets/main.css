@@ -24,11 +24,29 @@ body,
 a,
 button,
 input,
-textarea {
+textarea,
+select {
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   font-size: 16px;
   /* defined by scheme */
   color: var(--color-text);
+}
+
+input,
+textarea,
+select {
+  padding: 2px 8px;
+}
+
+a,
+button {
+  cursor: pointer;
+}
+
+.fa-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: var(--color-text);
 }

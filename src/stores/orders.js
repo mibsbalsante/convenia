@@ -2,7 +2,7 @@ import { ref, computed } from "vue";
 import { defineStore, storeToRefs } from "pinia";
 import { v4 as uuid } from "uuid";
 
-const emptyOrder = {
+const _emptyOrder = {
   tableId: null,
   bookingStartTime: null,
   bookingEndTime: null,
@@ -13,6 +13,8 @@ const emptyOrder = {
   payments: [],
   status: "active",
 };
+
+const _clone = (obj) => JSON.parse(JSON.stringify(obj));
 
 const ordersStore = defineStore("orders", () => {
   const _orders = ref([]);
@@ -26,7 +28,7 @@ const ordersStore = defineStore("orders", () => {
 
   function bookTableForOrder(orderInformation) {
     const id = uuid();
-    const order = { ...emptyOrder, ...orderInformation, id };
+    const order = { ..._emptyOrder, ...orderInformation, id };
     _orders.value.push(order);
 
     return id;
@@ -43,21 +45,33 @@ const ordersStore = defineStore("orders", () => {
     if (orderId) {
       const ind = _findOrderInd(orderId);
 
-      _orders.value[ind] = {
+      _orders.value[ind] = _clone({
         ..._orders.value[ind],
         ...orderInformation,
         serviceHasStarted: true,
-      };
+      });
     } else {
       orderId = uuid();
-      _orders.value.push({
-        ...emptyOrder,
-        ...orderInformation,
-        serviceHasStarted: true,
-        id: orderId,
-      });
+      _orders.value.push(
+        _clone({
+          ..._emptyOrder,
+          ...orderInformation,
+          serviceHasStarted: true,
+          id: orderId,
+        })
+      );
     }
     return orderId;
+  }
+
+  function addToOrder(id, type, details) {
+    const ind = _findOrderInd(id);
+    _orders.value[ind][type].push(details);
+  }
+
+  function removeFromOrder(id, type, indToRemove) {
+    const ind = _findOrderInd(id);
+    _orders.value[ind][type].splice(indToRemove, 1);
   }
 
   return {
@@ -66,6 +80,8 @@ const ordersStore = defineStore("orders", () => {
     bookTableForOrder,
     clearTableOrder,
     startTableOrder,
+    addToOrder,
+    removeFromOrder,
   };
 });
 

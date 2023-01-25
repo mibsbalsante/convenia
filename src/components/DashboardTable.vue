@@ -24,22 +24,21 @@ const bookingTimeHasStarted = computed(
     :to="`/table/${id}`"
     :class="{
       table: true,
-      'table--late': bookingTimeHasStarted,
       'table--filled': activeOrderId,
+      'table--late': bookingTimeHasStarted,
     }"
     activeClass="table--selected"
   >
     <h3 class="table__heading">Mesa {{ id }}</h3>
 
-    <span v-if="bookingTimeHasStarted">Reservada</span>
-    <span v-else-if="activeOrderId">Preenchida</span>
+    <span v-if="activeOrderId">Preenchida</span>
+    <span v-else-if="bookingTimeHasStarted">Reservada</span>
     <span v-else>Disponível</span>
   </RouterLink>
 </template>
 
 <style lang="scss" scoped>
 .table {
-  cursor: pointer;
   text-align: center;
   text-decoration: none;
   min-width: 140px;
@@ -76,13 +75,13 @@ const bookingTimeHasStarted = computed(
   }
 
   &--filled {
-    background-color: var(--color-orange);
-    border-color: var(--color-orange-helper);
+    background-color: var(--color-yellow);
+    border-color: var(--color-yellow-helper);
   }
 
   &--selected {
-    background-color: var(--color-yellow);
-    border-color: var(--color-yellow-helper);
+    background-color: var(--color-orange);
+    border-color: var(--color-orange-helper);
 
     &:focus,
     &:focus-visible {
