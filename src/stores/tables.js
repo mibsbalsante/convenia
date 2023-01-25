@@ -1,16 +1,23 @@
 import { ref } from "vue";
 import { defineStore, storeToRefs } from "pinia";
 
+const emptyTable = {
+  activeOrderId: null,
+};
+
 const tablesStore = defineStore("tables", () => {
   const tables = ref(
-    Array.from(Array(20), (_, ind) => ({ id: ind + 1, orderId: null }))
+    Array.from(Array(20), (_, ind) => ({
+      id: ind + 1,
+      ...emptyTable,
+    }))
   );
 
   const selectedTable = ref({ ind: -1, table: null });
 
   function selectTable(ind) {
     if (!ind)
-      return {
+      selectedTable.value = {
         ind: -1,
         table: null,
       };
@@ -25,11 +32,24 @@ const tablesStore = defineStore("tables", () => {
     };
   }
 
-  function clearTable(ind) {
-    tables.value[ind].orderId = null;
+  function fillTable(ind, activeOrderId) {
+    tables.value[ind].activeOrderId = activeOrderId;
   }
 
-  return { tables, selectedTable, selectTable, clearTable };
+  function clearTable(ind) {
+    tables.value[ind] = {
+      ...tables.value[ind],
+      ...emptyTable,
+    };
+  }
+
+  return {
+    tables,
+    selectedTable,
+    selectTable,
+    fillTable,
+    clearTable,
+  };
 });
 
 export const useTablesStore = () => storeToRefs(tablesStore());

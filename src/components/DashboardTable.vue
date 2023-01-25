@@ -1,19 +1,39 @@
 <script setup>
-defineProps({
+import { computed } from "vue";
+
+import { useOrdersStore } from "@/stores/orders";
+
+const { orders } = useOrdersStore();
+
+const props = defineProps({
   id: Number,
-  orderId: Number,
+  activeOrderId: String,
 });
+
+const bookingTimeHasStarted = computed(
+  () =>
+    orders.value.find(
+      ({ tableId, bookingStartTime }) =>
+        tableId === props.id && new Date() > bookingStartTime
+    ) //props.bookingStartTime && new Date() > props.bookingStartTime
+);
 </script>
 
 <template>
   <RouterLink
     :to="`/table/${id}`"
-    :class="{ table: true, 'table--filled': !!orderId }"
+    :class="{
+      table: true,
+      'table--late': bookingTimeHasStarted,
+      'table--filled': activeOrderId,
+    }"
     activeClass="table--selected"
   >
-    Mesa {{ id }}
-    <br />
-    <span></span>
+    <h3 class="table__heading">Mesa {{ id }}</h3>
+
+    <span v-if="bookingTimeHasStarted">Reservada</span>
+    <span v-else-if="activeOrderId">Preenchida</span>
+    <span v-else>Disponível</span>
   </RouterLink>
 </template>
 
@@ -25,9 +45,8 @@ defineProps({
   min-width: 140px;
   min-height: 124px;
   padding: 40px 20px;
-  font-size: 24px;
+  font-size: 14px;
   border-radius: 8px;
-  font-weight: 600;
   transition: all 0.3s ease-in-out;
   background-color: var(--color-green);
   border: 1px solid var(--color-green-helper);
@@ -51,6 +70,11 @@ defineProps({
     }
   }
 
+  &--late {
+    background-color: var(--color-red);
+    border-color: var(--color-red-helper);
+  }
+
   &--filled {
     background-color: var(--color-orange);
     border-color: var(--color-orange-helper);
@@ -72,5 +96,12 @@ defineProps({
       }
     }
   }
+}
+
+.table__heading {
+  font-size: 24px;
+  font-weight: 600;
+
+  margin: 0 0 8px;
 }
 </style>

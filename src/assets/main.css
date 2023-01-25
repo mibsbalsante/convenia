@@ -1,4 +1,34 @@
 @import "./base.css";
 
-#app {
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  position: relative;
+  font-weight: normal;
+  line-height: 1.2;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color-scheme: dark light;
+  /* defined by scheme */
+  background-color: var(--color-background);
+}
+
+body,
+a,
+button,
+input,
+textarea {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  font-size: 16px;
+  /* defined by scheme */
+  color: var(--color-text);
 }
