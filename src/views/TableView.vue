@@ -1,8 +1,9 @@
 <script setup>
-import { ref, computed } from "vue";
+import { computed } from "vue";
 
 import router from "@/router";
 import TableActive from "@/components/TableActive.vue";
+import TableBooking from "@/components/TableBooking.vue";
 import { useTablesStore, useTablesActions } from "@/stores/tables";
 import { useOrdersStore, useOrdersActions } from "@/stores/orders";
 import IconClose from "@fa/solid/xmark.svg";
@@ -19,10 +20,6 @@ const { bookTableForOrder, clearTableOrder, startTableOrder } =
 // helpers
 const hourAsMiliseconds = 60 * 60 * 1000;
 const addOneHour = (date) => new Date(date.getTime() + hourAsMiliseconds);
-const formatHourInput = ({ target }) => {
-  const hour = Number(target.value);
-  if (Number.isNaN(hour) || hour > 24) bookingHour.value = 24;
-};
 
 // current order conected to the table
 const activeTableOrder = computed(() =>
@@ -44,21 +41,19 @@ const handleGoBack = () => router.go(-1);
 const handleGoHome = () => router.push("/");
 
 // booking
-const bookingHour = ref(null);
-const bookingPersonName = ref(null);
-const bookingPersonContact = ref(null);
-
-const handleBooking = () => {
-  const bookingStartTime = new Date(
-    new Date().setHours(bookingHour.value, 0, 0, 0)
-  );
+const handleBooking = ({
+  bookingHour,
+  bookingPersonName,
+  bookingPersonContact,
+}) => {
+  const bookingStartTime = new Date(new Date().setHours(bookingHour, 0, 0, 0));
   const bookingEndTime = addOneHour(bookingStartTime);
   bookTableForOrder({
     tableId: table.id,
     bookingStartTime,
     bookingEndTime,
-    personName: bookingPersonName.value,
-    personContact: bookingPersonContact.value,
+    personName: bookingPersonName,
+    personContact: bookingPersonContact,
   });
   alert(
     `Mesa ${table.id} reservada com sucesso!
@@ -85,6 +80,8 @@ const handlePayment = () => {
   clearTable(ind);
   clearTableOrder(activeTableOrder.value.id);
   handleGoHome();
+  alert(`Atendimento finalizado com sucesso!
+Mesa ${table.id} liberada.`);
 };
 </script>
 
@@ -119,6 +116,11 @@ const handlePayment = () => {
         <div class="modal__info">
           <p><strong>Data:</strong> {{ new Date().toLocaleString() }}</p>
           <p><strong>Cod. atendimento:</strong> {{ activeTableOrder?.id }}</p>
+          <p v-if="activeTableOrder?.personName">
+            <strong>Cliente:</strong>
+            {{ activeTableOrder?.personName }} -
+            {{ activeTableOrder?.personContact }}
+          </p>
         </div>
         <TableActive
           :orderId="activeTableOrder.id"
@@ -136,49 +138,27 @@ const handlePayment = () => {
       </template>
 
       <template v-else>
-        <div class="modal__text-content">
-          <p class="modal__text">
-            Mesa vazia no momento. Gostaria de reservar ou inciar atendimento?
-          </p>
-        </div>
-        <div class="modal__info modal__info--form">
-          <div>
-            <label for="#booking-input">Hora da reserva:</label>
-            <input
-              id="booking-input-hour"
-              min="1"
-              max="24"
-              type="number"
-              v-model.number="bookingHour"
-              @change="formatHourInput"
-            />:00
-          </div>
-          <div>
-            <label for="#booking-input">Nome do cliente:</label>
-            <input
-              id="booking-input-name"
-              type="text"
-              v-model="bookingPersonName"
-            />
-          </div>
-          <div>
-            <label for="#booking-input">Contato:</label>
-            <input
-              id="booking-input-contact"
-              type="text"
-              v-model="bookingPersonContact"
-            />
-          </div>
-        </div>
-        <div class="modal__footer">
-          <button
-            :disabled="!bookingHour || !bookingPersonName"
-            @click="handleBooking"
+        <TableBooking>
+          <template
+            #footer="{ bookingHour, bookingPersonName, bookingPersonContact }"
           >
-            Reservar
-          </button>
-          <button @click="handleOrder">Iniciar atendimento</button>
-        </div>
+            <div class="modal__footer">
+              <button
+                :disabled="!bookingHour || !bookingPersonName"
+                @click="
+                  handleBooking({
+                    bookingHour,
+                    bookingPersonName,
+                    bookingPersonContact,
+                  })
+                "
+              >
+                Reservar
+              </button>
+              <button @click="handleOrder">Iniciar atendimento</button>
+            </div>
+          </template>
+        </TableBooking>
       </template>
     </main>
   </div>
@@ -247,42 +227,6 @@ const handlePayment = () => {
     & > p {
       font-size: 14px;
       margin: 0 0 8px;
-    }
-
-    &--form {
-      border-top: 1px solid var(--color-grey);
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 12px;
-      padding: 32px 0 24px;
-
-      div {
-        display: flex;
-        flex-wrap: nowrap;
-        align-items: center;
-      }
-
-      label {
-        white-space: nowrap;
-        margin-right: 6px;
-      }
-
-      input[type="text"] {
-        width: 100%;
-      }
-
-      input[type="number"] {
-        max-width: 40px;
-        -moz-appearance: textfield;
-
-        /* Chrome, Safari, Edge, Opera */
-        &::-webkit-outer-spin-button,
-        &::-webkit-inner-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
-        }
-      }
     }
   }
 
