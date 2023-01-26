@@ -13,6 +13,7 @@
   "dependencies": {
     "pinia": "^2.0.28",
     "uuid": "^9.0.0",
+    "v-money3": "^3.22.3",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6"
   },

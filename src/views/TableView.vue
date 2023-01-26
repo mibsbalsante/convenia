@@ -5,6 +5,7 @@ import router from "@/router";
 import TableActive from "@/components/TableActive.vue";
 import { useTablesStore, useTablesActions } from "@/stores/tables";
 import { useOrdersStore, useOrdersActions } from "@/stores/orders";
+import IconClose from "@fa/solid/xmark.svg";
 
 const { selectedTable } = useTablesStore();
 const { orders } = useOrdersStore();
@@ -15,6 +16,11 @@ const { fillTable, clearTable } = useTablesActions();
 const { bookTableForOrder, clearTableOrder, startTableOrder } =
   useOrdersActions();
 
+// helpers
+const hourAsMiliseconds = 60 * 60 * 1000;
+const addOneHour = (date) => new Date(date.getTime() + hourAsMiliseconds);
+
+// current order conected to the table
 const activeTableOrder = computed(() =>
   orders.value.find(({ id }) => id === selectedTable.value.table?.activeOrderId)
 );
@@ -27,9 +33,6 @@ const currentBookedOrder = computed(() => {
       new Date() > bookingStartTime
   );
 });
-
-// utils
-const formatHour = (date) => date.toTimeString().substr(0, 8);
 
 // navigation
 const handleGoBack = () => router.go(-1);
@@ -45,7 +48,7 @@ const handleBooking = () => {
   bookTableForOrder({
     tableId: table.id,
     bookingStartTime: new Date(),
-    bookingEndTime: new Date(),
+    bookingEndTime: addOneHour(new Date()),
     personName: "Person Name",
     personContact: "+5511999999999",
   });
@@ -69,42 +72,57 @@ const handlePayment = () => {
 <template>
   <div class="overlay" @click.self="handleGoBack">
     <main class="modal" v-if="ind >= 0">
+      <button class="modal__close" @click="handleGoBack"><IconClose /></button>
       <h2 class="modal__title">Mesa {{ table.id }}</h2>
 
-      <div class="modal__text-content" v-if="currentBookedOrder">
-        <p class="modal__text">
-          Mesa reservada no momento. Gostaria de abrir a comanda?
-        </p>
-        <p class="modal__text modal__highlight">
-          Hora da reserva:
-          {{ formatHour(currentBookedOrder.bookingStartTime) }} -
-          {{ formatHour(currentBookedOrder.bookingEndTime) }}
-        </p>
-      </div>
-      <TableActive
-        class="details"
-        :orderId="activeTableOrder.id"
-        :bill="activeTableOrder.bill"
-        :payments="activeTableOrder.payments"
-        v-else-if="activeTableOrder"
-      />
-      <div class="modal__text-content" v-else>
-        <p class="modal__text">
-          Mesa vazia no momento. Gostaria de reservar ou abrir comanda?
-        </p>
-      </div>
+      <template v-if="currentBookedOrder">
+        <div class="modal__text-content">
+          <p class="modal__text">
+            Mesa reservada no momento. Gostaria de abrir a comanda?
+          </p>
+          <p class="modal__text modal__highlight">
+            Hora da reserva:
+            {{ currentBookedOrder.bookingStartTime.toLocaleTimeString() }} -
+            {{ currentBookedOrder.bookingEndTime.toLocaleTimeString() }}
+          </p>
+        </div>
+        <div class="modal__footer">
+          <button @click="handleClearTable">Cancelar a reserva</button>
+          <button @click="handleOrder">Abrir comanda</button>
+        </div>
+      </template>
 
-      <div class="modal__footer" v-if="currentBookedOrder">
-        <button @click="handleClearTable">Cancelar a reserva</button>
-        <button @click="handleOrder">Abrir comanda</button>
-      </div>
-      <div class="modal__footer" v-else-if="activeTableOrder">
-        <button @click="handlePayment">Fechar comanda</button>
-      </div>
-      <div class="modal__footer" v-else>
-        <button @click="handleBooking">Reservar</button>
-        <button @click="handleOrder">Abrir comanda</button>
-      </div>
+      <template v-else-if="activeTableOrder">
+        <div class="modal__info">
+          <p><strong>Data:</strong> {{ new Date().toLocaleString() }}</p>
+          <p><strong>Cod. comanda:</strong> {{ activeTableOrder?.id }}</p>
+        </div>
+        <TableActive
+          :orderId="activeTableOrder.id"
+          :bill="activeTableOrder.bill"
+          :payments="activeTableOrder.payments"
+        >
+          <template #footer="{ disableButtons }">
+            <div class="modal__footer">
+              <button @click="handlePayment" :disabled="disableButtons">
+                Fechar comanda
+              </button>
+            </div>
+          </template>
+        </TableActive>
+      </template>
+
+      <template v-else>
+        <div class="modal__text-content">
+          <p class="modal__text">
+            Mesa vazia no momento. Gostaria de reservar ou abrir comanda?
+          </p>
+        </div>
+        <div class="modal__footer">
+          <button @click="handleBooking">Reservar</button>
+          <button @click="handleOrder">Abrir comanda</button>
+        </div>
+      </template>
     </main>
   </div>
 </template>
@@ -146,6 +164,15 @@ const handlePayment = () => {
   background-color: var(--color-background);
   box-shadow: var(--shadow);
 
+  &__close {
+    appearance: none;
+    position: absolute;
+    top: 35px;
+    right: 20px;
+    background-color: transparent;
+    border: 0 none;
+  }
+
   &__text-content {
     margin: auto 0;
   }
@@ -156,6 +183,13 @@ const handlePayment = () => {
     padding-bottom: 18px;
     text-align: center;
     border-bottom: 1px solid var(--color-grey);
+  }
+
+  &__info {
+    margin: 0 24px 24px;
+    & > p {
+      font-size: 14px;
+    }
   }
 
   &__text {

@@ -45,6 +45,12 @@ button {
   cursor: pointer;
 }
 
+a[disabled],
+button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .fa-icon {
   width: 1.5rem;
   height: 1.5rem;

@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
+import { Money3Component } from "v-money3";
 
 import { accepted_payments as paymentsJSON } from "@/utils/payments";
 import { useOrdersActions } from "@/stores/orders";
@@ -49,14 +50,15 @@ const handleRemoveFromBill = (ind) => {
 
 // ---- payment management ----
 const paymentTypeId = ref(0);
-const paymentValue = ref(null);
+const paymentValue = ref("");
 const paymentDescription = ref(null);
-const paymentValueRemaining = computed(() =>
-  props.payments.reduce(
+const paymentValueRemaining = computed(() => {
+  const remaining = props.payments.reduce(
     (total, { value }) => (total -= value),
     totalBill.value + totalTip.value
-  )
-);
+  );
+  return Number(remaining.toFixed(2));
+});
 
 const handleAddToPayments = () => {
   addToOrder(props.orderId, "payments", {
@@ -64,7 +66,8 @@ const handleAddToPayments = () => {
     value: paymentValue.value,
     description: paymentDescription.value,
   });
-  quantity.value = 1;
+  paymentValue.value = "";
+  paymentDescription.value = "";
 };
 
 const handleRemoveFromPayments = (ind) => {
@@ -100,11 +103,7 @@ const handleRemoveFromPayments = (ind) => {
           </tr>
           <tr>
             <td>
-              <select
-                class="details__input-item"
-                :value="currentInd"
-                @change="currentInd = $event.target.value"
-              >
+              <select class="details__input-item" v-model="currentInd">
                 <option
                   v-for="(item, ind) in availableMenu"
                   :value="ind"
@@ -120,8 +119,7 @@ const handleRemoveFromPayments = (ind) => {
                 type="number"
                 :max="currentItem.quantity"
                 min="0"
-                :value="quantity"
-                @change="quantity = Number($event.target.value)"
+                v-model.number="quantity"
               />
             </td>
             <td>R$ {{ (currentItem.price || 0).toFixed(2) }}</td>
@@ -138,12 +136,12 @@ const handleRemoveFromPayments = (ind) => {
         </tbody>
         <tfoot>
           <tr>
-            <td colspan="2">Taxa da comanda</td>
+            <td colspan="2">Total da comanda</td>
             <td>R$ {{ totalBill.toFixed(2) }}</td>
             <td></td>
           </tr>
           <tr>
-            <td colspan="2">Taxa de serviço - 10%</td>
+            <td colspan="2">Taxa de serviço + 10%</td>
             <td>R$ {{ totalTip.toFixed(2) }}</td>
             <td></td>
           </tr>
@@ -186,8 +184,8 @@ const handleRemoveFromPayments = (ind) => {
             <td>
               <select
                 class="details__input-item"
-                :value="paymentTypeId"
-                @change="paymentTypeId = Number($event.target.value)"
+                v-model.number="paymentTypeId"
+                :disabled="!paymentValueRemaining"
               >
                 <option
                   v-for="(payment, ind) in paymentsJSON"
@@ -199,24 +197,27 @@ const handleRemoveFromPayments = (ind) => {
               </select>
             </td>
             <td>
-              <input
-                type="text"
-                :value="paymentValue"
-                @change="paymentValue = Number($event.target.value)"
+              <Money3Component
+                class="details__input-money"
+                v-model.number="paymentValue"
+                :min="0"
+                :max="paymentValueRemaining"
+                :disabled="!paymentValueRemaining"
               />
             </td>
             <td>
               <input
                 type="text"
-                :value="paymentDescription"
-                @change="paymentDescription = $event.target.value"
+                v-model="paymentDescription"
+                :disabled="!paymentValueRemaining"
               />
             </td>
             <td>
               <button
+                disable-nagative
                 @click="handleAddToPayments"
                 class="details__button-update"
-                :disabled="!paymentValue"
+                :disabled="!paymentValue || !paymentValueRemaining"
               >
                 <IconCirclePlus />
               </button>
@@ -233,6 +234,10 @@ const handleRemoveFromPayments = (ind) => {
       </table>
     </div>
   </div>
+  <slot
+    name="footer"
+    :disableButtons="paymentValueRemaining || bill.length < 1"
+  ></slot>
 </template>
 
 <style lang="scss" scoped>
@@ -327,7 +332,8 @@ const handleRemoveFromPayments = (ind) => {
     width: 100%;
   }
 
-  &__input-quantity {
+  &__input-quantity,
+  &__input-money {
     max-width: 96px;
   }
 }
