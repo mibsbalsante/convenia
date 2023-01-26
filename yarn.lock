@@ -1563,6 +1563,7 @@ __metadata:
     eslint-plugin-vue: ^9.3.0
     jsdom: ^20.0.3
     pinia: ^2.0.28
+    pinia-plugin-persistedstate: ^3.0.2
     prettier: ^2.7.1
     sass: ^1.57.1
     uuid: ^9.0.0
@@ -3694,6 +3695,15 @@ __metadata:
   version: 2.3.1
   resolution: "picomatch@npm:2.3.1"
   checksum: 050c865ce81119c4822c45d3c84f1ced46f93a0126febae20737bd05ca20589c564d6e9226977df859ed5e03dc73f02584a2b0faad36e896936238238b0446cf
+  languageName: node
+  linkType: hard
+
+"pinia-plugin-persistedstate@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "pinia-plugin-persistedstate@npm:3.0.2"
+  peerDependencies:
+    pinia: ^2.0.0
+  checksum: 0705c22e46e335a3cca951d2d76e1496899fb52869629c2a1af121029c7d0ea21a40d32faabfe963b7e9e9439a7c620f768732fa83d95b46de11c92b28c69ab2
   languageName: node
   linkType: hard
 

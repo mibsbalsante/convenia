@@ -16,73 +16,76 @@ const _emptyOrder = {
 
 const _clone = (obj) => JSON.parse(JSON.stringify(obj));
 
-const ordersStore = defineStore("orders", () => {
-  const _orders = ref([]);
+const ordersStore = defineStore("orders", {
+  state: () => {
+    const _orders = ref([]);
 
-  const _findOrderInd = (orderId) =>
-    _orders.value.findIndex(({ id }) => id === orderId);
+    const _findOrderInd = (orderId) =>
+      _orders.value.findIndex(({ id }) => id === orderId);
 
-  const orders = computed(() =>
-    _orders.value.filter(({ status }) => status === "active")
-  );
+    const orders = computed(() =>
+      _orders.value.filter(({ status }) => status === "active")
+    );
 
-  function bookTableForOrder(orderInformation) {
-    const id = uuid();
-    const order = { ..._emptyOrder, ...orderInformation, id };
-    _orders.value.push(order);
+    function bookTableForOrder(orderInformation) {
+      const id = uuid();
+      const order = { ..._emptyOrder, ...orderInformation, id };
+      _orders.value.push(order);
 
-    return id;
-  }
+      return id;
+    }
 
-  function clearTableOrder(id) {
-    const ind = _findOrderInd(id);
-    _orders.value[ind].status = "cancelled";
-  }
+    function clearTableOrder(id) {
+      const ind = _findOrderInd(id);
+      _orders.value[ind].status = "cancelled";
+    }
 
-  function startTableOrder({ id, ...orderInformation }) {
-    let orderId = id;
+    function startTableOrder({ id, ...orderInformation }) {
+      let orderId = id;
 
-    if (orderId) {
-      const ind = _findOrderInd(orderId);
+      if (orderId) {
+        const ind = _findOrderInd(orderId);
 
-      _orders.value[ind] = _clone({
-        ..._orders.value[ind],
-        ...orderInformation,
-        serviceHasStarted: true,
-      });
-    } else {
-      orderId = uuid();
-      _orders.value.push(
-        _clone({
-          ..._emptyOrder,
+        _orders.value[ind] = _clone({
+          ..._orders.value[ind],
           ...orderInformation,
           serviceHasStarted: true,
-          id: orderId,
-        })
-      );
+        });
+      } else {
+        orderId = uuid();
+        _orders.value.push(
+          _clone({
+            ..._emptyOrder,
+            ...orderInformation,
+            serviceHasStarted: true,
+            id: orderId,
+          })
+        );
+      }
+      return orderId;
     }
-    return orderId;
-  }
 
-  function addToOrder(id, type, details) {
-    const ind = _findOrderInd(id);
-    _orders.value[ind][type].push(details);
-  }
+    function addToOrder(id, type, details) {
+      const ind = _findOrderInd(id);
+      _orders.value[ind][type].push(details);
+    }
 
-  function removeFromOrder(id, type, indToRemove) {
-    const ind = _findOrderInd(id);
-    _orders.value[ind][type].splice(indToRemove, 1);
-  }
+    function removeFromOrder(id, type, indToRemove) {
+      const ind = _findOrderInd(id);
+      _orders.value[ind][type].splice(indToRemove, 1);
+    }
 
-  return {
-    _orders,
-    orders,
-    bookTableForOrder,
-    clearTableOrder,
-    startTableOrder,
-    addToOrder,
-    removeFromOrder,
-  };
+    return {
+      _orders,
+      orders,
+      bookTableForOrder,
+      clearTableOrder,
+      startTableOrder,
+      addToOrder,
+      removeFromOrder,
+    };
+  },
+  persist: true,
 });
 
 export const useOrdersStore = () => storeToRefs(ordersStore());
