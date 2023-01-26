@@ -26,5 +26,10 @@ See the webapp live: [great-restaurant](https://great-restaurant.ue.r.appspot.co
 ## Extras instructions
 
 - It's possible to download the app as a PWA
-- The interface change following your device color scheme
 - All the stores are saved in the browser
+- The interface change following your device color scheme. To toggle quickly between color schemes, do the following:
+  - Open Chrome Inspect Tools
+  - CTRL + P
+  - "Show Rendering"
+  - Scroll all the way until you find **Emulate CSS media feature prefers-color-scheme**
+- Any questions, reach me out through [my email](mailto:mibsbalsante@gmail.com)
