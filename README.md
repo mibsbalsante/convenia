@@ -1,41 +1,30 @@
-# convenia
+![image](./public/images/icons/icon-72x72.png)
 
-This template should help get you started developing with Vue 3 in Vite.
+# Convenia Challenge - Great Restaurant
 
-## Recommended IDE Setup
+See the webapp live: [great-restaurant](https://great-restaurant.ue.r.appspot.com/)
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## Tools and setup
 
-## Customize configuration
+- Commitizen for commit normalization
+- Vue.js v3 + JSX plugins
+- Vue Router
+- Pinia
+- Vite
+- SASS -> .scss syntax
+- Yarn v3.3.1
+- Node.js v16-v17
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+## How to run
 
-## Project Setup
+- Install [Node.js](https://nodejs.org/en/download) using version v18 or above
+- Install [Yarn](https://yarnpkg.com/pt-BR/docs/install)
+- Clone this repository
+- Run `yarn && yarn dev` to install the dependencies and run the project
+- Open your [9000 port](http://localhost:9000)
 
-```sh
-yarn
-```
+## Extras instructions
 
-### Compile and Hot-Reload for Development
-
-```sh
-yarn dev
-```
-
-### Compile and Minify for Production
-
-```sh
-yarn build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-yarn test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-yarn lint
-```
+- It's possible to download the app as a PWA
+- The interface change following your device color scheme
+- All the stores are saved in the browser
