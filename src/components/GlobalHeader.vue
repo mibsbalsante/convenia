@@ -12,9 +12,17 @@ const { logout } = useUserActions();
   <header class="header">
     <div class="header__container">
       <div class="header__icons">
-        <IconUtensils />
-        <IconBowlFood />
-        <IconMugHot />
+        <IconUtensils id="logo-1" />
+        <IconBowlFood id="logo-2" />
+        <IconMugHot id="logo-3" />
+        <svg>
+          <defs>
+            <linearGradient id="logo-gradient" gradientTransform="rotate(80)">
+              <stop offset="55%" stop-color="#dcedc1" />
+              <stop offset="100%" stop-color="#ff8b94" />
+            </linearGradient>
+          </defs>
+        </svg>
       </div>
       <nav v-if="isLoggedIn">
         <span
@@ -49,6 +57,12 @@ const { logout } = useUserActions();
     @include center;
 
     gap: 12px;
+
+    @media (prefers-color-scheme: dark) {
+      svg {
+        fill: url("#logo-gradient");
+      }
+    }
   }
 
   &__container {
