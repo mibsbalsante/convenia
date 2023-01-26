@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue";
+import { ref, computed } from "vue";
 
 import router from "@/router";
 import TableActive from "@/components/TableActive.vue";
@@ -19,6 +19,10 @@ const { bookTableForOrder, clearTableOrder, startTableOrder } =
 // helpers
 const hourAsMiliseconds = 60 * 60 * 1000;
 const addOneHour = (date) => new Date(date.getTime() + hourAsMiliseconds);
+const formatHourInput = ({ target }) => {
+  const hour = Number(target.value);
+  if (Number.isNaN(hour) || hour > 24) bookingHour.value = 24;
+};
 
 // current order conected to the table
 const activeTableOrder = computed(() =>
@@ -27,10 +31,11 @@ const activeTableOrder = computed(() =>
 
 const currentBookedOrder = computed(() => {
   return orders.value.find(
-    ({ tableId, serviceHasStarted, bookingStartTime }) =>
+    ({ tableId, serviceHasStarted, bookingStartTime, bookingEndTime }) =>
       tableId === table.id &&
       !serviceHasStarted &&
-      new Date() > bookingStartTime
+      new Date() > bookingStartTime &&
+      new Date() < bookingEndTime
   );
 });
 
@@ -38,20 +43,34 @@ const currentBookedOrder = computed(() => {
 const handleGoBack = () => router.go(-1);
 const handleGoHome = () => router.push("/");
 
+// booking
+const bookingHour = ref(null);
+const bookingPersonName = ref(null);
+const bookingPersonContact = ref(null);
+
+const handleBooking = () => {
+  const bookingStartTime = new Date(
+    new Date().setHours(bookingHour.value, 0, 0, 0)
+  );
+  const bookingEndTime = addOneHour(bookingStartTime);
+  bookTableForOrder({
+    tableId: table.id,
+    bookingStartTime,
+    bookingEndTime,
+    personName: bookingPersonName.value,
+    personContact: bookingPersonContact.value,
+  });
+  alert(
+    `Mesa ${table.id} reservada com sucesso!
+Hora da reserva: ${bookingStartTime.toLocaleTimeString()} - ${bookingEndTime.toLocaleTimeString()}`
+  );
+  handleGoHome();
+};
+
 // order-table relationship
 const handleClearTable = () => {
   clearTable(ind);
   clearTableOrder(currentBookedOrder.value.id);
-  handleGoHome();
-};
-const handleBooking = () => {
-  bookTableForOrder({
-    tableId: table.id,
-    bookingStartTime: new Date(),
-    bookingEndTime: addOneHour(new Date()),
-    personName: "Person Name",
-    personContact: "+5511999999999",
-  });
   handleGoHome();
 };
 const handleOrder = () => {
@@ -78,24 +97,28 @@ const handlePayment = () => {
       <template v-if="currentBookedOrder">
         <div class="modal__text-content">
           <p class="modal__text">
-            Mesa reservada no momento. Gostaria de abrir a comanda?
+            Mesa reservada no momento. Gostaria de iniciar o atendimento?
           </p>
           <p class="modal__text modal__highlight">
             Hora da reserva:
             {{ currentBookedOrder.bookingStartTime.toLocaleTimeString() }} -
             {{ currentBookedOrder.bookingEndTime.toLocaleTimeString() }}
           </p>
+          <p class="modal__text">
+            Cliente: {{ currentBookedOrder.personName }} -
+            {{ currentBookedOrder.personContact || "contato não preenchido" }}
+          </p>
         </div>
         <div class="modal__footer">
           <button @click="handleClearTable">Cancelar a reserva</button>
-          <button @click="handleOrder">Abrir comanda</button>
+          <button @click="handleOrder">Iniciar atendimento</button>
         </div>
       </template>
 
       <template v-else-if="activeTableOrder">
         <div class="modal__info">
           <p><strong>Data:</strong> {{ new Date().toLocaleString() }}</p>
-          <p><strong>Cod. comanda:</strong> {{ activeTableOrder?.id }}</p>
+          <p><strong>Cod. atendimento:</strong> {{ activeTableOrder?.id }}</p>
         </div>
         <TableActive
           :orderId="activeTableOrder.id"
@@ -105,7 +128,7 @@ const handlePayment = () => {
           <template #footer="{ disableButtons }">
             <div class="modal__footer">
               <button @click="handlePayment" :disabled="disableButtons">
-                Fechar comanda
+                Concluir atendimento
               </button>
             </div>
           </template>
@@ -115,12 +138,46 @@ const handlePayment = () => {
       <template v-else>
         <div class="modal__text-content">
           <p class="modal__text">
-            Mesa vazia no momento. Gostaria de reservar ou abrir comanda?
+            Mesa vazia no momento. Gostaria de reservar ou inciar atendimento?
           </p>
         </div>
+        <div class="modal__info modal__info--form">
+          <div>
+            <label for="#booking-input">Hora da reserva:</label>
+            <input
+              id="booking-input-hour"
+              min="1"
+              max="24"
+              type="number"
+              v-model.number="bookingHour"
+              @change="formatHourInput"
+            />:00
+          </div>
+          <div>
+            <label for="#booking-input">Nome do cliente:</label>
+            <input
+              id="booking-input-name"
+              type="text"
+              v-model="bookingPersonName"
+            />
+          </div>
+          <div>
+            <label for="#booking-input">Contato:</label>
+            <input
+              id="booking-input-contact"
+              type="text"
+              v-model="bookingPersonContact"
+            />
+          </div>
+        </div>
         <div class="modal__footer">
-          <button @click="handleBooking">Reservar</button>
-          <button @click="handleOrder">Abrir comanda</button>
+          <button
+            :disabled="!bookingHour || !bookingPersonName"
+            @click="handleBooking"
+          >
+            Reservar
+          </button>
+          <button @click="handleOrder">Iniciar atendimento</button>
         </div>
       </template>
     </main>
@@ -186,15 +243,51 @@ const handlePayment = () => {
   }
 
   &__info {
-    margin: 0 24px 24px;
+    margin: 0 24px 8px;
     & > p {
       font-size: 14px;
+      margin: 0 0 8px;
+    }
+
+    &--form {
+      border-top: 1px solid var(--color-grey);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 32px 0 24px;
+
+      div {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+      }
+
+      label {
+        white-space: nowrap;
+        margin-right: 6px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+      }
+
+      input[type="number"] {
+        max-width: 40px;
+        -moz-appearance: textfield;
+
+        /* Chrome, Safari, Edge, Opera */
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+      }
     }
   }
 
   &__text {
     text-align: center;
-    margin: 0;
   }
 
   &__highlight {

@@ -10,12 +10,13 @@ const props = defineProps({
   activeOrderId: String,
 });
 
-const bookingTimeHasStarted = computed(
-  () =>
-    orders.value.find(
-      ({ tableId, bookingStartTime }) =>
-        tableId === props.id && new Date() > bookingStartTime
-    ) //props.bookingStartTime && new Date() > props.bookingStartTime
+const isInBookingInterval = computed(() =>
+  orders.value.find(
+    ({ tableId, bookingStartTime, bookingEndTime }) =>
+      tableId === props.id &&
+      new Date() > bookingStartTime &&
+      new Date() < bookingEndTime
+  )
 );
 </script>
 
@@ -25,14 +26,14 @@ const bookingTimeHasStarted = computed(
     :class="{
       table: true,
       'table--filled': activeOrderId,
-      'table--late': bookingTimeHasStarted,
+      'table--late': isInBookingInterval,
     }"
     activeClass="table--selected"
   >
     <h3 class="table__heading">Mesa {{ id }}</h3>
 
     <span v-if="activeOrderId">Ocupada</span>
-    <span v-else-if="bookingTimeHasStarted">Reservada</span>
+    <span v-else-if="isInBookingInterval">Reservada</span>
     <span v-else>Disponível</span>
   </RouterLink>
 </template>

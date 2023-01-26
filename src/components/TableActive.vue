@@ -136,7 +136,7 @@ const handleRemoveFromPayments = (ind) => {
         </tbody>
         <tfoot>
           <tr>
-            <td colspan="2">Total da comanda</td>
+            <td colspan="2">Total consumido</td>
             <td>R$ {{ totalBill.toFixed(2) }}</td>
             <td></td>
           </tr>
