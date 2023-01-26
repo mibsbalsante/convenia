@@ -38,7 +38,7 @@ const currentBookedOrder = computed(() => {
 
 // navigation
 const handleGoBack = () => router.go(-1);
-const handleGoHome = () => router.push("/");
+const handleGoHome = () => router.push({ name: "dashboard" });
 
 // booking
 const handleBooking = ({
@@ -251,7 +251,7 @@ Mesa ${table.id} liberada.`);
     & > :is(button, a) {
       appearance: none;
       padding: 8px 16px;
-      border-radius: 100px;
+      border-radius: 120px;
       border: 1px solid var(--color-text);
       transition: border-color 0.3s ease-in-out,
         background-color 0.3s ease-in-out, color 0.3s ease-in-out;

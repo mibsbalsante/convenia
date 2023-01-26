@@ -17,7 +17,7 @@ const formatHourInput = ({ target }) => {
   </p>
   <div class="booking__form">
     <div>
-      <label for="#booking-input">Hora da reserva:</label>
+      <label for="booking-input">Hora da reserva:</label>
       <input
         id="booking-input-hour"
         min="1"
@@ -28,11 +28,11 @@ const formatHourInput = ({ target }) => {
       />:00
     </div>
     <div>
-      <label for="#booking-input">Nome do cliente:</label>
+      <label for="booking-input">Nome do cliente:</label>
       <input id="booking-input-name" type="text" v-model="bookingPersonName" />
     </div>
     <div>
-      <label for="#booking-input">Contato:</label>
+      <label for="booking-input">Contato:</label>
       <input
         id="booking-input-contact"
         type="text"

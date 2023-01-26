@@ -1,34 +1,27 @@
 <script setup>
+import router from "@/router";
 import { useUserStore, useUserActions } from "@/stores/user";
-import IconUtensils from "@fa/solid/utensils.svg";
-import IconBowlFood from "@fa/solid/bowl-food.svg";
-import IconMugHot from "@fa/solid/mug-hot.svg";
+import LogoSvgs from "./LogoSvgs.vue";
 
 const { username, isLoggedIn } = useUserStore();
 const { logout } = useUserActions();
+
+const handleLogout = () => {
+  logout();
+  localStorage.clear();
+  router.push({ name: "login" });
+};
 </script>
 
 <template>
-  <header class="header">
+  <header v-if="isLoggedIn" class="header">
     <div class="header__container">
-      <div class="header__icons">
-        <IconUtensils id="logo-1" />
-        <IconBowlFood id="logo-2" />
-        <IconMugHot id="logo-3" />
-        <svg>
-          <defs>
-            <linearGradient id="logo-gradient" gradientTransform="rotate(80)">
-              <stop offset="55%" stop-color="#dcedc1" />
-              <stop offset="100%" stop-color="#ff8b94" />
-            </linearGradient>
-          </defs>
-        </svg>
-      </div>
+      <LogoSvgs class="header__icons" />
       <nav v-if="isLoggedIn">
         <span
           >Logado como <strong>{{ username }}</strong></span
         >
-        <button class="header__logout" @click="logout">Sair</button>
+        <button class="header__logout" @click="handleLogout">Sair</button>
       </nav>
     </div>
   </header>
@@ -51,18 +44,6 @@ const { logout } = useUserActions();
     @include center;
 
     gap: 12px;
-  }
-
-  &__icons {
-    @include center;
-
-    gap: 12px;
-
-    @media (prefers-color-scheme: dark) {
-      svg {
-        fill: url("#logo-gradient");
-      }
-    }
   }
 
   &__container {
